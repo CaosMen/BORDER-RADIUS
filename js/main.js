@@ -15,6 +15,14 @@ jQuery(function($) {
         return ($(".box").outerWidth() + $(".box").offset().left); 
     }
 
+    function get_width() {
+        return $('.box').width();
+    }
+
+    function get_height() {
+        return $('.box').height();
+    }
+
     if ((location.hash.substring(1)).split('.').length == 8) {
         let array = (location.hash.substring(1)).split('.').map(e => parseInt(e) || 0);
         
@@ -30,7 +38,6 @@ jQuery(function($) {
         $('.right-top').draggable({
             axis: 'y',
             containment: [0, get_y1(), 0, get_y2()],
-            grid: [$('.box').width() / 100, $('.box').height() / 100],
             cursorAt: { top: 0, left: 0 },
             drag: function() {
                 update_radius(true);
@@ -40,7 +47,6 @@ jQuery(function($) {
         $('.left-top').draggable({
             axis: 'y',
             containment: [0, get_y1(), 0, get_y2()],
-            grid: [$('.box').width() / 100, $('.box').height() / 100],
             cursorAt: { top: 0, left: 0 },
             drag: function() {
                 update_radius(true);
@@ -50,7 +56,6 @@ jQuery(function($) {
         $('.right-bottom').draggable({
             axis: 'y',
             containment: [0, get_y1(), 0, get_y2()],
-            grid: [$('.box').width() / 100, $('.box').height() / 100],
             cursorAt: { top: 0, left: 0 },
             drag: function() {
                 update_radius(true);
@@ -60,7 +65,6 @@ jQuery(function($) {
         $('.left-bottom').draggable({
             axis: 'y',
             containment: [0, get_y1(), 0, get_y2()],
-            grid: [$('.box').width() / 100, $('.box').height() / 100],
             cursorAt: { top: 0, left: 0 },
             drag: function() {
                 update_radius(true);
@@ -70,7 +74,6 @@ jQuery(function($) {
         $('.top-right').draggable({
             axis: 'x',
             containment: [get_x1(), 0, get_x2(), 0],
-            grid: [$('.box').width() / 100, $('.box').height() / 100],
             cursorAt: { top: 0, left: 0 },
             drag: function() {
                 update_radius(true);
@@ -80,7 +83,6 @@ jQuery(function($) {
         $('.top-left').draggable({
             axis: 'x',
             containment: [get_x1(), 0, get_x2(), 0],
-            grid: [$('.box').width() / 100, $('.box').height() / 100],
             cursorAt: { top: 0, left: 0 },
             drag: function() {
                 update_radius(true);
@@ -90,7 +92,6 @@ jQuery(function($) {
         $('.bottom-right').draggable({
             axis: 'x',
             containment: [get_x1(), 0, get_x2(), 0],
-            grid: [$('.box').width() / 100, $('.box').height() / 100],
             cursorAt: { top: 0, left: 0 },
             drag: function() {
                 update_radius(true);
@@ -100,7 +101,6 @@ jQuery(function($) {
         $('.bottom-left').draggable({
             axis: 'x',
             containment: [get_x1(), 0, get_x2(), 0],
-            grid: [$('.box').width() / 100, $('.box').height() / 100],
             cursorAt: { top: 0, left: 0 },
             drag: function() {
                 update_radius(true);
@@ -113,43 +113,32 @@ jQuery(function($) {
     });
 
     function set_value(arr) {
-        let width = $('.box').width();
-        let height = $('.box').height();
-
-        $('.top-left').css("left", (width * (arr[0] / 100)) + "px");
-        $('.top-right').css("left", (width * (((arr[1] - 100) * -1) / 100)) + "px");
-        $('.bottom-right').css("left", (width * (((arr[2] - 100) * -1) / 100)) + "px");
-        $('.bottom-left').css("left", (width * (arr[3] / 100)) + "px");
-        $('.left-top').css("top", (height * (arr[4] / 100)) + "px");
-        $('.right-top').css("top", (height * (arr[5] / 100)) + "px");
-        $('.right-bottom').css("top", (height * (((arr[6] - 100) * -1) / 100)) + "px");
-        $('.left-bottom').css("top", (height * (((arr[7] - 100) * -1) / 100)) + "px");
+        $('.top-left').css("left", (get_width() * (arr[0] / 100)) + "px");
+        $('.top-right').css("left", (get_width() * (((arr[1] - 100)) / -100)) + "px");
+        $('.bottom-right').css("left", (get_width() * (((arr[2] - 100)) / -100)) + "px");
+        $('.bottom-left').css("left", (get_width() * (arr[3] / 100)) + "px");
+        $('.left-top').css("top", (get_height() * (arr[4] / 100)) + "px");
+        $('.right-top').css("top", (get_height() * (arr[5] / 100)) + "px");
+        $('.right-bottom').css("top", (get_height() * (((arr[6] - 100)) / -100)) + "px");
+        $('.left-bottom').css("top", (get_height() * (((arr[7] - 100)) / -100)) + "px");
     }
 
     function update_radius(set_url) {
-        let width = $('.box').width();
-        let height = $('.box').height();
+        let tl = { vl: parseInt((parseInt($('.top-left').css("left")) / get_width()) * 100), name: '--tl'};
+        let tr = { vl: parseInt(((parseInt($('.top-right').css("left")) - get_width()) / get_width()) * -100), name: '--tr'};
+        let br = { vl: parseInt(((parseInt($('.bottom-right').css("left")) - get_width()) / get_width()) * -100), name: '--br'};
+        let bl = { vl: parseInt((parseInt($('.bottom-left').css("left")) / get_width()) * 100), name: '--bl'};
+        let lt = { vl: parseInt((parseInt($('.left-top').css("top")) / get_height()) * 100), name: '--lt'};
+        let rt = { vl: parseInt((parseInt($('.right-top').css("top")) / get_height()) * 100), name: '--rt'};
+        let rb = { vl: parseInt(((parseInt($('.right-bottom').css("top")) - get_height()) / get_height()) * -100), name: '--rb'};
+        let lb = { vl: parseInt(((parseInt($('.left-bottom').css("top")) - get_height()) / get_height()) * -100), name: '--lb'};
 
-        let tl = parseInt((parseInt($('.top-left').css("left")) / width) * 100);
-        let tr = parseInt(((parseInt($('.top-right').css("left")) - width) / width) * -100);
-        let br = parseInt(((parseInt($('.bottom-right').css("left")) - width) / width) * -100);
-        let bl = parseInt((parseInt($('.bottom-left').css("left")) / width) * 100);
-        let lt = parseInt((parseInt($('.left-top').css("top")) / height) * 100);
-        let rt = parseInt((parseInt($('.right-top').css("top")) / height) * 100);
-        let rb = parseInt(((parseInt($('.right-bottom').css("top")) - height) / height) * -100);
-        let lb = parseInt(((parseInt($('.left-bottom').css("top")) - height) / height) * -100);
+        let arr = [tl, tr, br, bl, lt, rt, rb, lb];
 
-        document.documentElement.style.setProperty('--tl', tl + "%");
-        document.documentElement.style.setProperty('--tr', tr + "%");
-        document.documentElement.style.setProperty('--br', br + "%");
-        document.documentElement.style.setProperty('--bl', bl + "%");
-        document.documentElement.style.setProperty('--lt', lt + "%");
-        document.documentElement.style.setProperty('--rt', rt + "%");
-        document.documentElement.style.setProperty('--rb', rb + "%");
-        document.documentElement.style.setProperty('--lb', lb + "%");
+        arr.forEach(e => document.documentElement.style.setProperty(e.name, e.vl + "%"));
 
-        $('#border-r').text(tl + "% " + tr + "% " + br + "% " + bl + "%" + " / " + lt + "% " + rt + "% " + rb + "% " + lb + "%");
+        $('#border-r').text(tl.vl + "% " + tr.vl + "% " + br.vl + "% " + bl.vl + "%" + " / " + lt.vl + "% " + rt.vl + "% " + rb.vl + "% " + lb.vl + "%");
 
-        if (set_url)  location.hash = [tl, tr, br, bl, lt, rt, rb, lb].join('.');
+        if (set_url)  location.hash = arr.map(e => e.vl).join('.');
     }
 });
